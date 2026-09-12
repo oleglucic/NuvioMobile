@@ -1,1 +1,8 @@
-PLACEHOLDER_WILL_FAIL
+<resources>
+    <string name="theme_gold">Zlatna</string>
+    <string name="theme_jade">Žad</string>
+    <string name="theme_rose_gold">Roze zlato</string>
+    <string name="theme_arctic_blue">Arktičko plava</string>
+    <string name="theme_graphite">Grafit</string>
+    <!-- Full translation will be uploaded in next commit - this is a partial placeholder -->
+</resources>
