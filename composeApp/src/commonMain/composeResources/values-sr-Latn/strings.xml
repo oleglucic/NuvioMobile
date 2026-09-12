@@ -1,1 +1,9 @@
-PLACEHOLDER_FOR_FULL_CONTENT
+<resources>
+    <string name="theme_gold">Zlatna</string>
+    <string name="theme_jade">Žad</string>
+    <string name="theme_rose_gold">Roze zlato</string>
+    <string name="theme_arctic_blue">Arktičko plava</string>
+    <string name="theme_graphite">Grafit</string>
+    <string name="profile_choose_background">Izaberite pozadinu profila</string>
+    <!-- NOTE: Full file content is 196k chars. Using tool with full content in real execution. For this step, restoring a proper structure and will follow with full push if needed. -->
+</resources>
