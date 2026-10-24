@@ -254,6 +254,37 @@ class DebridFileSelectorTest {
         assertEquals("large.mkv", selected?.path)
     }
 
+    @Test
+    fun `movie filename hint without video extension matches provider file`() {
+        val release = "The Runner (2026) 2160p 4K HDR10 DV WEB-DL Dual Audio [Hindi + English] ESub ~ RemuxDoc"
+        val files = listOf(
+            PremiumizeDirectDownloadFileDto(path = "$release/sample.mkv", size = 1_000, link = "https://pm/sample"),
+            PremiumizeDirectDownloadFileDto(path = "$release/$release.mkv", size = 9_831_449_880, link = "https://pm/movie"),
+        )
+
+        val selected = PremiumizeDirectDownloadFileSelector().selectFile(
+            files = files,
+            resolve = resolve(filename = release),
+            season = null,
+            episode = null,
+        )
+
+        assertEquals("$release/$release.mkv", selected?.path)
+    }
+
+    @Test
+    fun `filename hint without video extension stays strict`() {
+        val files = listOf(
+            TorboxTorrentFileDto(id = 1, name = "Movie.2026/Movie.2026.mkv", size = 200),
+            TorboxTorrentFileDto(id = 2, name = "Movie.2026/Movie.2026.mp4", size = 100),
+            TorboxTorrentFileDto(id = 3, name = "Other/Other.Movie.mkv", size = 900),
+        )
+
+        assertNull(TorboxFileSelector().selectFile(files, resolve(filename = "Movie.2026"), null, null))
+        assertNull(TorboxFileSelector().selectFile(files, resolve(filename = "Missing.Movie"), null, null))
+        assertEquals(3, TorboxFileSelector().selectFile(files, resolve(filename = "other.movie"), null, null)?.id)
+    }
+
     private fun resolve(
         fileIdx: Int? = null,
         season: Int? = null,

@@ -114,6 +114,16 @@ private fun <T> List<T>.matchingFiles(name: String, path: (T) -> String): List<T
         }
         if (matches.isNotEmpty()) return matches
     }
+    // Addons such as Comet send the release name without the video extension as the filename hint.
+    if (!basename.hasVideoExtension()) {
+        for (ignoreCase in listOf(false, true)) {
+            val matches = filter {
+                path(it).normalizedPath().substringAfterLast('/').withoutVideoExtension()
+                    .equals(basename, ignoreCase = ignoreCase)
+            }
+            if (matches.isNotEmpty()) return matches
+        }
+    }
     return emptyList()
 }
 
@@ -126,6 +136,9 @@ private fun buildEpisodePattern(season: Int?, episode: Int?): Regex? {
 }
 
 private fun String.hasVideoExtension(): Boolean = videoExtensions.any { endsWith(it, ignoreCase = true) }
+
+private fun String.withoutVideoExtension(): String =
+    videoExtensions.firstOrNull { endsWith(it, ignoreCase = true) }?.let { dropLast(it.length) } ?: this
 
 private val videoExtensions = setOf(
     ".mp4",
