@@ -1,0 +1,56 @@
+# Fork-only verification workflow. Never part of an upstream PR.
+name: CI verify (fork only)
+
+on:
+  push:
+    branches: [ci/verify-mobile]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: baseline upstream cmp-rewrite
+            repository: NuvioMedia/NuvioMobile
+            ref: c114d6fb69fbed2bbed1f728bce7d752b5a19158
+          - name: fix/debrid-filename-hint-without-extension
+            repository: oleglucic/NuvioMobile
+            ref: fix/debrid-filename-hint-without-extension
+          - name: fix/skip-button-pip
+            repository: oleglucic/NuvioMobile
+            ref: fix/skip-button-pip
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.ref }}
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Host tests (commonTest + androidHostTest)
+        run: ./gradlew :composeApp:testAndroidHostTest -Pnuvio.android.distribution=full --continue --stacktrace
+
+      - name: Assemble full debug APK
+        if: always()
+        run: ./gradlew :androidApp:assembleFullDebug -Pnuvio.android.distribution=full --stacktrace
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports-${{ strategy.job-index }}
+          path: composeApp/build/reports/tests/
+          if-no-files-found: warn
