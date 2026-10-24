@@ -40,6 +40,9 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v6
 
+      - name: Create empty local.properties (no secrets in fork CI)
+        run: touch local.properties
+
       - name: Host tests (commonTest + androidHostTest)
         run: ./gradlew :composeApp:testAndroidHostTest -Pnuvio.android.distribution=full --continue --stacktrace
 
