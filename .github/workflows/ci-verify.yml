@@ -54,3 +54,11 @@ jobs:
           name: test-reports-${{ strategy.job-index }}
           path: composeApp/build/reports/tests/
           if-no-files-found: warn
+
+      - name: Upload debug APKs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: apk-${{ strategy.job-index }}
+          path: androidApp/build/outputs/apk/full/debug/*.apk
+          if-no-files-found: warn
