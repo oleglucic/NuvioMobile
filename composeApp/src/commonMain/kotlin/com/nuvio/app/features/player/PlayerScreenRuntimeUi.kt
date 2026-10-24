@@ -428,6 +428,7 @@ private fun BoxScope.RenderPlaybackOverlays(
     p2pRebufferMessage: String?,
     p2pRebufferProgress: Float?,
 ) {
+    val isInPip = rememberIsInPictureInPicture()
     runtime.run {
         PlayerPlaybackOverlays(
             playerControlsLocked = playerControlsLocked,
@@ -462,7 +463,7 @@ private fun BoxScope.RenderPlaybackOverlays(
         renderedGestureFeedback = renderedGestureFeedback,
         initialLoadCompleted = initialLoadCompleted,
         pausedOverlayVisible = pausedOverlayVisible,
-        activeSkipInterval = activeSkipInterval,
+        activeSkipInterval = activeSkipInterval.takeUnless { isInPip },
         skipsToPostCredits = activeSkipInterval?.internalSkipAction(skipIntervals, playbackSnapshot.durationMs)?.skipsToPostCredits == true,
         skipIntervalDismissed = skipIntervalDismissed,
         controlsVisible = controlsVisible,
